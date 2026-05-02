@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Klein's Full Stack App</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: Arial;
+            }
+
+            body {
+                background-color: #f0f0f0;
+            }
+
+            #hero {
+                background-color: #2c3e50;
+                color: white;
+                text-align: center;
+                padding: 60px 20px;
+            }
+
+            #hero h1 {
+                font-size: 42px;
+                margin-bottom: 10px;
+            }
+
+            #hero p {
+                font-size: 18px;
+                color: #bdc3c7;
+                margin-bottom: 25px;
+            }
+
+            .section {
+                background-color: white;
+                margin: 20px auto;
+                padding: 40px;
+                max-width: 700px;
+                border-radius: 12px;
+            }
+
+            .section h2 {
+                color: #2c3e50;
+                margin-bottom: 15px;
+                font-size: 26px;
+            }
+
+            ul {
+                list-style: none;
+                padding: 0;
+            }
+
+            li {
+                font-size: 17px;
+                padding: 8px 0;
+                border-bottom: 1px solid #eee;
+            }
+
+            .friend-card {
+                background-color: #f9f9f9;
+                border-left: 4px solid #e74c3c;
+                padding: 15px;
+                margin: 10px 0;
+                border-radius: 8px;
+            }
+
+            .friend-card h3 {
+                color: #2c3e50;
+                margin-bottom: 5px;
+            }
+
+            .friend-card p {
+                color: #555;
+                font-size: 15px;
+            }
+
+            button {
+                background-color: #e74c3c;
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                font-size: 16px;
+                border-radius: 8px;
+                cursor: pointer;
+                margin-bottom: 15px;
+            }
+
+            button:hover {
+                background-color: #c0392b;
+            }
+
+            input {
+                width: 100%;
+                padding: 12px;
+                margin: 8px 0;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                font-size: 16px;
+            }
+
+            #contactResponse {
+                color: green;
+                font-weight: bold;
+                margin-top: 10px;
+            }
+        </style>
+    </head>
+    <body>
+
+        <!-- HERO -->
+        <div id="hero">
+            <h1 id="heroTitle">Hi I'm Klein 👋</h1>
+            <p>Aspiring Full Stack Developer from Kitwe, Zambia</p>
+            <button onclick="changeTheme()">Switch Theme 🌙</button>
+        </div>
+
+        <!-- ABOUT -->
+        <div class="section">
+            <h2>About Me</h2>
+            <p>I'm a passionate developer from Kitwe, Zambia.
+            I love building things and solving problems with code.</p>
+        </div>
+
+        <!-- SKILLS -->
+        <div class="section">
+            <h2>My Skills</h2>
+            <ul>
+                <li>🐍 Python</li>
+                <li>🌐 HTML</li>
+                <li>🎨 CSS</li>
+                <li>⚡ JavaScript</li>
+                <li>💻 C++</li>
+                <li>🗄️ SQL</li>
+                <li>🔥 Flask</li>
+            </ul>
+        </div>
+
+        <!-- PROJECTS -->
+        <div class="section">
+            <h2>My Projects</h2>
+            <div class="friend-card">
+                <h3>Student Grade Manager</h3>
+                <p>A Python program that manages student scores
+                and assigns grades automatically.</p>
+            </div>
+            <div class="friend-card">
+                <h3>Voting Checker</h3>
+                <p>A Python program that checks if you
+                are eligible to vote based on your age.</p>
+            </div>
+            <div class="friend-card">
+                <h3>Friends Database App</h3>
+                <p>A full stack web app built with Flask,
+                SQLite and JavaScript.</p>
+            </div>
+        </div>
+
+        <!-- FRIENDS DATABASE -->
+        <div class="section">
+            <h2>Friends Database 👥</h2>
+            <button onclick="loadFriends()">Load Friends</button>
+            <div id="friendsList"></div>
+        </div>
+
+        <!-- CONTACT -->
+        <div class="section">
+            <h2>Contact Me</h2>
+            <input id="nameBox" type="text" placeholder="Your name">
+            <input id="msgBox" type="text" placeholder="Your message">
+            <button onclick="sendMessage()">Send Message 📩</button>
+            <p id="contactResponse"></p>
+        </div>
+
+        <script>
+            // Theme switcher
+            let darkMode = false;
+
+            function changeTheme() {
+                if (darkMode === false) {
+                    document.body.style.backgroundColor = "#1a1a2e";
+                    document.body.style.color = "white";
+                    darkMode = true;
+                } else {
+                    document.body.style.backgroundColor = "#f0f0f0";
+                    document.body.style.color = "#333";
+                    darkMode = false;
+                }
+            }
+
+            // Load friends from database
+            function loadFriends() {
+                fetch("/api/friends")
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(friends) {
+                        let html = "";
+                        friends.forEach(function(friend) {
+                            html += "<div class='friend-card'>";
+                            html += "<h3>" + friend.name + "</h3>";
+                            html += "<p>Age: " + friend.age + "</p>";
+                            html += "<p>City: " + friend.city + "</p>";
+                            html += "</div>";
+                        });
+                        document.getElementById("friendsList").innerHTML = html;
+                    });
+            }
+
+            // Contact form
+            function sendMessage() {
+                let name = document.getElementById("nameBox").value;
+                let message = document.getElementById("msgBox").value;
+
+                if (name === "" || message === "") {
+                    document.getElementById("contactResponse").innerText = "Please fill in both fields!";
+                    document.getElementById("contactResponse").style.color = "red";
+                } else {
+                    document.getElementById("contactResponse").innerText = "Thanks " + name + "! Message received ✅";
+                    document.getElementById("contactResponse").style.color = "green";
+                }
+            }
+        </script>
+
+    </body>
+</html>
